@@ -1,0 +1,10 @@
+#dependency directory
+node_modules
+#logs and log directory
+logs
+*.log*
+#intermediate sass files
+.sass-cache
+*.css.map
+
+.DS_STORE
