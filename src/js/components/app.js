@@ -25,7 +25,6 @@ React.createClass({
         return (
             <div className="center">
             <p class="">Go build something.</p>
-            <p> You lazy peice of shit.</p>
             </div>)
 }
 })

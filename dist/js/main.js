@@ -19333,8 +19333,7 @@ React.createClass({displayName: "App",
     render:function(){
         return (
             React.createElement("div", {className: "center"}, 
-            React.createElement("p", {class: ""}, "Go build something."), 
-            React.createElement("p", null, " You lazy peice of shit.")
+            React.createElement("p", {class: ""}, "Go build something.")
             ))
 }
 })
