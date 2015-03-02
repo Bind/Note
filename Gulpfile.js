@@ -8,7 +8,7 @@ var gulp = require('gulp'),
     child = require("child_process"),
     fs = require('fs');
 
-
+var server;
 gulp.task('browserify', function(){
   gulp.src('src/js/main.js')
   .pipe(browserify({transform: 'reactify'}))
@@ -32,20 +32,29 @@ gulp.task('styles', function(){
     })
 
 
+
 gulp.task('watch', function(){
 gulp.watch('src/sass/*.scss', ['styles']);
 gulp.watch('src/*.html', ['copy'])
 gulp.watch("src/js/*/*.*", ['browserify'])
+gulp.watch("server.js", ['restart'])
     })
 
 gulp.task('server', function(){
-  var server = child.spawn('node', ['server.js']);
+  server = child.spawn('node', ['server.js']);
   var log = fs.createWriteStream('server.log', {flags: 'a'});
   server.stdout.on('data', function(data){
    process.stdout.write(data.toString())
     })
   server.stderr.pipe(log);
-  })
+  
+})
+gulp.task('restart', function(){
+  server.kill('SIGINT');
+  gulp.start('server')
+  console.log("server restarted!")
+
+})
 
 gulp.task('default', ['styles','server', 'watch'], function() {
   // place code for your default task here

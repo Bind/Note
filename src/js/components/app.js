@@ -4,7 +4,6 @@ var React = require('react');
 var AppActions = require('../actions/app-actions.js')
 var App = 
 React.createClass({
-
     getInitialState: function(){
         return {
             username:'',
@@ -13,13 +12,22 @@ React.createClass({
     handleChangeMessage: function(e){
         this.setState({message: e.target.value})
     },
-    componentDidMount: function(){
-        $.get(this.props.source, function(result){
+    componentDidMount:function(){
+    var socket = io();
+    //do ajaxy stuff here.
 
-        })
+},
+    componentWillReceiveProps:function(nextProps){
+        //this.setState
+
     },
     render:function(){
-    return <h1 onClick={this.handleClick}>Build</h1>
-}})
+        return (
+            <div className="center">
+            <p class="">Go build something.</p>
+            <p> You lazy peice of shit.</p>
+            </div>)
+}
+})
 
 module.exports = App;

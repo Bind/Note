@@ -11,8 +11,13 @@ var items = []
 
 function _removeItem(index){
 
-
 }
+
+
+        var socket = io();
+console.log("is this running")
+
+
 
 var AppStore = merge(EventEmitter.prototype, {
     emitChange:function(){
@@ -22,7 +27,7 @@ var AppStore = merge(EventEmitter.prototype, {
         this.on(CHANGE_EVENT, callback)
     },
     removeChangeListener: function(callback){
-        this.remvoeListener(CHANGE_EVENT, callback)
+        this.removeListener(CHANGE_EVENT, callback)
     },
     dispatcherIndex: AppDispatcher.register(function(payload){
         var action = payload.action;

@@ -1,3 +1,16 @@
-*{
-    color: blue;
+body{
+    background-color:#020D0C;
+    font-size:12pt;
+    font-family: 'Open Sans', sans-serif;
+    color:white;
+    min-width:360px;
+    min-height:500px;
+    cursor: default;
+    width:100%;
+    overflow-x:hidden;
+}
+.center{
+margin: 240px auto;
+width:30%;
+text-align:center;
 }

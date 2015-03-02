@@ -19313,7 +19313,6 @@ var React = require('react');
 var AppActions = require('../actions/app-actions.js')
 var App = 
 React.createClass({displayName: "App",
-
     getInitialState: function(){
         return {
             username:'',
@@ -19322,14 +19321,23 @@ React.createClass({displayName: "App",
     handleChangeMessage: function(e){
         this.setState({message: e.target.value})
     },
-    componentDidMount: function(){
-        $.get(this.props.source, function(result){
+    componentDidMount:function(){
+    var socket = io();
+    //do ajaxy stuff here.
 
-        })
+},
+    componentWillReceiveProps:function(nextProps){
+        //this.setState
+
     },
     render:function(){
-    return React.createElement("h1", {onClick: this.handleClick}, "Build")
-}})
+        return (
+            React.createElement("div", {className: "center"}, 
+            React.createElement("p", {class: ""}, "Go build something."), 
+            React.createElement("p", null, " You lazy peice of shit.")
+            ))
+}
+})
 
 module.exports = App;
 
