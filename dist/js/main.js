@@ -19315,14 +19315,20 @@ var App =
 React.createClass({displayName: "App",
     getInitialState: function(){
         return {
-            username:'',
-            message: ''}
+
+            messages: ['Go Build Something.']}
     },
     handleChangeMessage: function(e){
         this.setState({message: e.target.value})
     },
     componentDidMount:function(){
-    var socket = io();
+    $.ajax({url: "/api/"}).done(function(response){
+        var _messages = this.state.messages;
+        _messages.push(response.message);
+        console.log(_messages)
+        this.setState({messages: _messages});
+    }.bind(this))
+
     //do ajaxy stuff here.
 
 },
@@ -19331,9 +19337,15 @@ React.createClass({displayName: "App",
 
     },
     render:function(){
+        //console.log(this)
+        var nodes = this.state.messages.map(function(message){
+            return React.createElement("p", {class: ""}, message)
+        })
+
+
         return (
             React.createElement("div", {className: "center"}, 
-            React.createElement("p", {class: ""}, "Go build something.")
+                nodes
             ))
 }
 })

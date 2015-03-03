@@ -19,7 +19,7 @@ var port = process.env.PORT || 8000;
 var router  = express.Router();
 
 router.get('/', function(req, res){
-    res.json({message: 'returning stuff'})
+    res.json({message: 'Right Now.'})
 });
 
 
