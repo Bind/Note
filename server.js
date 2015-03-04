@@ -1,9 +1,13 @@
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-
+var tweets = require('./emitter');
 var io = require('socket.io')(http)
 
+var gutil = require("gulp-util")
+
+gutil.log = require('./bin/log');
+var colors = require('colors')
 var mongoose = require("mongoose");
 
 var mongooseUrl =
@@ -29,6 +33,22 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + '/dist/index.html')
 })
 
+var twitter = new tweets();
+
+
+
+twitter.on('error', function(err){
+  console.log("failed wiht error",err)
+})
+
+twitter.on('success', function(){
+  gutil.log("Emitter success")
+})
+
+
+twitter.newTweet("asdf")
+
+
 
 io.on('connection', function(socket){
   console.log('a user connected');
@@ -38,7 +58,7 @@ io.on('connection', function(socket){
 });
 
 http.listen(port, function(){
-    console.log('Magic happens on port ' + port);
+    gutil.log('Magic happens on port ', port.toString().magenta);
 });
 
 

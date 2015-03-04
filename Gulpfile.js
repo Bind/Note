@@ -6,7 +6,11 @@ var gulp = require('gulp'),
     browserify = require('gulp-browserify'),
     concat = require("gulp-concat"),
     child = require("child_process"),
-    fs = require('fs');
+    fs = require('fs'),
+    gutil = require("gulp-util"),
+    colors = require("colors")
+
+gutil.log = require("./bin/log")
 
 var server;
 gulp.task('browserify', function(){
@@ -52,7 +56,7 @@ gulp.task('server', function(){
 gulp.task('restart', function(){
   server.kill('SIGINT');
   gulp.start('server')
-  console.log("server restarted!")
+  gutil.log("server restarted!".red)
 
 })
 
