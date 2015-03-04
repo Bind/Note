@@ -1,11 +1,15 @@
-var express = require('express');
-var app = express();
 
-var router  = express.Router();
+module.exports = function(app, express){
 
-router.post('/git', function(req, res){
+    var router = express.Router();
+
+    router.post('/gitpush', function(req, res){
     
 })
-router.get('/', function(req, res){
+    router.get('/', function(req, res){
     res.json({message: 'Right Now.'})
 });
+    app.use('/api', router)
+
+}
+

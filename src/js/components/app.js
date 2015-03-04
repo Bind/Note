@@ -13,12 +13,13 @@ React.createClass({
         this.setState({message: e.target.value})
     },
     componentDidMount:function(){
-    $.ajax({url: "/api/"}).done(function(response){
-        var _messages = this.state.messages;
-        _messages.push(response.message);
-        console.log(_messages)
-        this.setState({messages: _messages});
-    }.bind(this))
+            
+        $.ajax({url: "/api/"}).done(function(response){
+            var _messages = this.state.messages;
+            _messages.push(response.message);
+            console.log(_messages)
+            this.setState({messages: _messages});
+        }.bind(this))
 
     //do ajaxy stuff here.
 

@@ -8,11 +8,14 @@ var gulp = require('gulp'),
     child = require("child_process"),
     fs = require('fs'),
     gutil = require("gulp-util"),
-    colors = require("colors")
+    colors = require("colors"),
+    ngrok = require('ngrok'),
+    config = require("./config");
 
 gutil.log = require("./bin/log")
 
 var server;
+
 gulp.task('browserify', function(){
   gulp.src('src/js/main.js')
   .pipe(browserify({transform: 'reactify'}))
@@ -51,6 +54,18 @@ gulp.task('server', function(){
    process.stdout.write(data.toString())
     })
   server.stderr.pipe(log);
+
+  ngrok.connect({
+      authtoken: config.ngrok_key,
+      subdomain: config.ngrok_subdomain,
+      port:8000
+    }, function(err, url){
+      if(err){
+        gutil.log("ngrok is awesome go register at")
+      }
+      gutil.log("server is exposed at",url.magenta)
+      })
+
   
 })
 gulp.task('restart', function(){

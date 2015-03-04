@@ -26,6 +26,7 @@
     "gulp-reactify": "^1.1.0",
     "gulp-rename": "^1.2.0",
     "gulp-ruby-sass": "^1.0.0-alpha.3",
+    "ngrok": "^0.1.99",
     "reactify": "^1.0.0"
   }
 }

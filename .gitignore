@@ -6,5 +6,5 @@ logs
 #intermediate sass files
 .sass-cache
 *.css.map
-
+config.js
 .DS_STORE
