@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var tweets = require('./emitter');
+var tweets = require('./bin/emitter');
 var io = require('socket.io')(http)
 
 var gutil = require("gulp-util")
@@ -58,7 +58,7 @@ io.on('connection', function(socket){
 });
 
 http.listen(port, function(){
-    gutil.log('Magic happens on port ', port.toString().magenta);
+    gutil.log('Magic happens on port', port.toString().magenta);
 });
 
 
