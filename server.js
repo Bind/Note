@@ -64,13 +64,14 @@ dispatcher.on('error', function(err){
 
 io.on('connection', function(socket){
   console.log('a user connected');
+  dispatcher.newMessage("Nice.")
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
 
 
 dispatcher.on('success', function(message){
-    io.emit('message', msg);
+    io.emit('message', message);
 })
 
 });
