@@ -21,6 +21,11 @@ var mongooseUrl =
 //mongoose.connect(mongooseUrl);
 //var db = mongoose.connection;
 
+
+/* MIDDLEWARE*/
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+
+
 var port = process.env.PORT || 8000;
 
 var router  = express.Router();
@@ -33,8 +38,7 @@ router.get('/', function(req, res){
 require('./routers/api')(app, express)
 
 
-/* MIDDLEWARE*/
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
+
 
 
 app.use('/', express.static(__dirname + '/dist'));
