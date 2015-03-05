@@ -67,16 +67,13 @@ io.on('connection', function(socket){
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
-  socket.on("git push", function(msg){
-  });
+
 
 dispatcher.on('success', function(message){
     io.emit('message', msg);
 })
 
 });
-
-
 
 
 http.listen(port, function(){
