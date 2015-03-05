@@ -9,7 +9,7 @@ var emitter = function(){
             this.emit('saved', message)
         }
         var _send = function(message, callback){
-            this.emit('success')
+            this.emit('success', message)
             //this.emit('error', new Error("unable to sendmessage"))
         }
         var _success = function(message, calback){
