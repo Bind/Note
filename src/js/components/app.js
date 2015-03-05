@@ -12,19 +12,22 @@ React.createClass({
     handleChangeMessage: function(e){
         this.setState({message: e.target.value})
     },
+    addMessage:function(message){
+            var _messages = this.state.messages;
+            _messages.push(message);
+            console.log(_messages)
+            this.setState({messages: _messages});
+    },
     componentDidMount:function(){
             
         $.ajax({url: "/api/"}).done(function(response){
-            var _messages = this.state.messages;
-            _messages.push(response.message);
-            console.log(_messages)
-            this.setState({messages: _messages});
+            this.addMessage(response.message)
         }.bind(this))
 
         var socket = io();
-        socket.on("gitcommit", function(message){
-            console.log(message)
-        })
+        socket.on("message", function(message){
+            this.addMessage(message)
+        }.bind(this))
     //do ajaxy stuff here.
 
 },

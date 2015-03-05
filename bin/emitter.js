@@ -5,20 +5,21 @@ var EventEmitter = require('events').EventEmitter;
 var emitter = function(){
     EventEmitter.call(this);
 
-        var _save = function(tweet, callback){
-            this.emit('saved', tweet)
+        var _save = function(message, callback){
+            this.emit('saved', message)
         }
-        var _send = function(tweet, callback){
+        var _send = function(message, callback){
             this.emit('success')
-            //this.emit('error', new Error("unable to sendtweet"))
+            //this.emit('error', new Error("unable to sendmessage"))
         }
-        var _success = function(tweet, calback){
-            this.emit('success', tweet)
+        var _success = function(message, calback){
+            this.emit('success', message)
         }
 
-        this.newTweet = function(tweet, callback){
-            this.emit('beginRegistration', tweet)
+        this.newMessage = function(message, callback){
+            this.emit('beginRegistration', message)
         }
+
         this.on('beginRegistration', _save);
         this.on('saved', _send);
         this.on('sent', _success);

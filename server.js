@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var tweets = require('./bin/emitter'),
+var emitter = require('./bin/emitter'),
   bodyParser = require("body-parser");
 var io = require('socket.io')(http)
 
@@ -34,8 +34,12 @@ router.get('/', function(req, res){
     res.json({message: 'Right Now.'})
 });
 
+
+var dispatcher = new emitter();
+
+
 /* ROUTES */
-require('./routers/api')(app, express)
+require('./routers/api')(app, express, dispatcher)
 
 
 
@@ -46,20 +50,17 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + '/dist/index.html')
 })
 
-var twitter = new tweets();
 
 
 
-twitter.on('error', function(err){
+
+dispatcher.on('error', function(err){
   console.log("failed wiht error",err)
 })
 
-twitter.on('success', function(){
-  gutil.log("Emitter success")
+dispatcher.on('success', function(message){
+  socket.emit('git push')
 })
-
-
-twitter.newTweet("asdf")
 
 
 
@@ -68,7 +69,13 @@ io.on('connection', function(socket){
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
+  socket.on("git push", function(msg){
+    io.emit('message', msg);
+  });
 });
+
+
+
 
 http.listen(port, function(){
     gutil.log('Magic happens on port', port.toString().magenta);
