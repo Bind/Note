@@ -63,7 +63,7 @@ gulp.task('server', function(){
       if(err){
         gutil.log("ngrok is awesome go register at")
       }
-      gutil.log("server is exposed at",url.magenta)
+      gutil.log("Project is exposed at",url.magenta)
       })
 
   

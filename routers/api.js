@@ -4,6 +4,7 @@ module.exports = function(app, express){
     var router = express.Router();
 
     router.post('/gitpush', function(req, res){
+        console.log(req)
     
 })
     router.get('/', function(req, res){

@@ -21,6 +21,10 @@ React.createClass({
             this.setState({messages: _messages});
         }.bind(this))
 
+        var socket = io();
+        socket.on("gitcommit", function(message){
+            console.log(message)
+        })
     //do ajaxy stuff here.
 
 },
