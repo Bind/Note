@@ -45,6 +45,7 @@ gulp.watch('src/sass/*.scss', ['styles']);
 gulp.watch('src/*.html', ['copy'])
 gulp.watch("src/js/*/*.*", ['browserify'])
 gulp.watch("server.js", ['restart'])
+gulp.watch("routers/*.js", ['restart'])
     })
 
 gulp.task('server', function(){
