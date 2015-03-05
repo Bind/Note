@@ -58,9 +58,7 @@ dispatcher.on('error', function(err){
   console.log("failed wiht error",err)
 })
 
-dispatcher.on('success', function(message){
-  socket.emit('git push')
-})
+
 
 
 
@@ -70,8 +68,12 @@ io.on('connection', function(socket){
     console.log('user disconnected');
   });
   socket.on("git push", function(msg){
-    io.emit('message', msg);
   });
+
+dispatcher.on('success', function(message){
+    io.emit('message', msg);
+})
+
 });
 
 
