@@ -13,10 +13,12 @@ var emitter = function(){
             //this.emit('error', new Error("unable to sendmessage"))
         }
         var _success = function(message, calback){
+            console.log("success?", message)
             this.emit('success', message)
         }
 
         this.newMessage = function(message, callback){
+            console.log("maybe?")
             this.emit('beginRegistration', message)
         }
 
