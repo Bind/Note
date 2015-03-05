@@ -33,11 +33,9 @@ router.get('/', function(req, res){
 require('./routers/api')(app, express)
 
 
-/* Me*/
+/* MIDDLEWARE*/
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
-}));
+
 
 app.use('/', express.static(__dirname + '/dist'));
 app.get('/', function(req, res){
