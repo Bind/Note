@@ -1,7 +1,8 @@
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var tweets = require('./bin/emitter');
+var tweets = require('./bin/emitter'),
+  bodyParser = require("body-parser");
 var io = require('socket.io')(http)
 
 var gutil = require("gulp-util")
@@ -30,6 +31,13 @@ router.get('/', function(req, res){
 
 /* ROUTES */
 require('./routers/api')(app, express)
+
+
+/* MIDDLEWARE*/
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
 
 
 app.use('/', express.static(__dirname + '/dist'));

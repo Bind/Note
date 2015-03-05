@@ -70,8 +70,10 @@ gulp.task('server', function(){
 })
 gulp.task('restart', function(){
   server.kill('SIGINT');
+  ngrok.disconnect();
   gulp.start('server')
   gutil.log("server restarted!".red)
+
 
 })
 
