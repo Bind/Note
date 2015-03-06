@@ -19328,18 +19328,24 @@ React.createClass({displayName: "App",
             this.setState({messages: _messages});
     },
     componentDidMount:function(){
-            
+
         $.ajax({url: "/api/"}).done(function(response){
             this.addMessage(response.message)
         }.bind(this))
-
-        var socket = io();
+        
+        var socket = io("https://bind.ngrok.com",{'reconnection':true,'force new connection':true});
+        socket.on('connection', function(){
+            console.log("connect")
+        })
+        
+        socket.emit('register', localStorage.getItem('gameUniqueId'));
+        var randomlyGeneratedUID = Math.random().toString(36).substring(3,16) + +new Date;
+        localStorage.setItem('gameUniqueId', randomlyGeneratedUID);
         socket.on("message", function(message){
             this.addMessage(message)
         }.bind(this))
-    //do ajaxy stuff here.
 
-},
+    },
     componentWillReceiveProps:function(nextProps){
         //this.setState
 

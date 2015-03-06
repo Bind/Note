@@ -41,38 +41,31 @@ var dispatcher = new emitter();
 /* ROUTES */
 require('./routers/api')(app, express, dispatcher)
 
-
-
-
-
 app.use('/', express.static(__dirname + '/dist'));
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/dist/index.html')
 })
-
-
-
-
 
 dispatcher.on('error', function(err){
   console.log("failed wiht error",err)
 })
 
 
+io.sockets.on('connection', function(socket){
+
+        dispatcher.newMessage("In Real Time")
+
+        socket.on('disconnect', function(){
+
+              console.log('a user disconnected');
+
+        });
+
+        dispatcher.on('success', function(message){
+           io.emit('message', message);
+        })
 
 
-
-io.on('connection', function(socket){
-  console.log('a user connected');
-  dispatcher.newMessage("Nice.")
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
-  });
-
-
-dispatcher.on('success', function(message){
-    io.emit('message', message);
-})
 
 });
 
