@@ -43,7 +43,7 @@ gulp.task('styles', function(){
 gulp.task('watch', function(){
 gulp.watch('src/sass/*.scss', ['styles']);
 gulp.watch('src/*.html', ['copy'])
-gulp.watch("src/js/*/*.*", ['browserify'])
+gulp.watch("src/js/*.*", ['browserify'])
 gulp.watch("server.js", ['restart'])
 gulp.watch("routers/*.js", ['restart'])
     })
