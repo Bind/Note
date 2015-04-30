@@ -1,7 +1,7 @@
 Start of a medium clone that is specifically for note taking.
 
-think evernote meets slack. 
+Think evernote meets slack. 
 
-integrations and a quick search based interface. 
+Integrations and a quick search based interface. 
 
 
