@@ -17,7 +17,7 @@ gutil.log = require("./bin/log")
 var server;
 
 gulp.task('browserify', function(){
-  gulp.src('src/js/main.js')
+  gulp.src('src/js/components/NoteApp.jsx')
   .pipe(browserify({transform: 'reactify'}))
   .pipe(concat('main.js'))
   .pipe(gulp.dest('dist/js'))
@@ -43,7 +43,7 @@ gulp.task('styles', function(){
 gulp.task('watch', function(){
 gulp.watch('src/sass/*.scss', ['styles']);
 gulp.watch('src/*.html', ['copy'])
-gulp.watch("src/js/*.*", ['browserify'])
+gulp.watch("src/js/*/*.*", ['browserify'])
 gulp.watch("server.js", ['restart'])
 gulp.watch("routers/*.js", ['restart'])
     })
@@ -56,10 +56,11 @@ gulp.task('server', function(){
     })
   server.stderr.pipe(log);
 
+
   ngrok.connect({
       authtoken: config.ngrok_key,
       subdomain: config.ngrok_subdomain,
-      port:8000
+      port:8080
     }, function(err, url){
       if(err){
         gutil.log("ngrok is awesome go register at")

@@ -1,0 +1,432 @@
+
+var KEY = {
+    ESCAPE: 27,
+    ENTER: 13,
+    BACKSPACE: 8,
+    DELETE: 46,
+    ARROW: {
+        LEFT: 37,
+        UP: 38,
+        RIGHT: 39,
+        DOWN: 40
+    },
+    TAB: 9,
+    SHIFT: 16,
+    CONTROL: 17,
+    ALT: 18,
+    CAPS: 20,
+    HOME: 36,
+    END: 35,
+    PAGEUP: 33,
+    PAGEDOWN: 34,
+    INSERT: 45,
+    BREAK: 19,
+    F1: 112,
+    F2: 113,
+    F3: 114,
+    F4: 115,
+    F5: 116,
+    F6: 117,
+    F7: 118,
+    F8: 119,
+    F9: 120,
+    F10: 121,
+    F11: 122,
+    F12: 123,
+    MOUSE: {
+        LEFT: 1,
+        RIGHT: 2,
+        MIDDLE: 3
+    }
+};
+Object.freeze(KEY);
+var KEYBOARD = {
+    DOWN: []
+};
+var MOUSE = {
+    DOWN: [],
+    X: 0,
+    Y: 0
+};
+$(document).keydown(function(e){
+    KEYBOARD.DOWN[e.which] = true;
+});
+$(document).keyup(function(e){
+    KEYBOARD.DOWN[e.which] = false;
+});
+$(document).mousedown(function(e){
+    MOUSE.DOWN[e.which] = true;
+});
+$(document).mouseup(function(e){
+    MOUSE.DOWN[e.which] = false;
+});
+$(document).mousemove(function(e) {
+    MOUSE.X = e.pageX;
+    MOUSE.Y = e.pageY;
+});
+$(window).blur(function() {
+    KEYBOARD.DOWN.length = 0;
+    MOUSE.DOWN.length = 0;
+});
+
+
+function keyPressed(which) {
+    if(KEYBOARD.DOWN[which]) return true;
+    else return false;
+}
+function mousePressed(which) {
+    if(MOUSE.DOWN[which]) return true;
+    else return false;
+}
+
+
+jQuery.fn.extend({ 
+        disableSelection : function() { 
+                return this.each(function() { 
+                        this.onselectstart = function() { return false; }; 
+                        this.unselectable = "on"; 
+                        jQuery(this).css('user-select', 'none'); 
+                        jQuery(this).css('-o-user-select', 'none'); 
+                        jQuery(this).css('-moz-user-select', 'none'); 
+                        jQuery(this).css('-khtml-user-select', 'none'); 
+                        jQuery(this).css('-webkit-user-select', 'none'); 
+                }); 
+        }
+}); 
+
+function defaultFor(arg, val) { return typeof arg !== 'undefined' ? arg : val; }
+
+
+
+
+
+function EditableTextarea(element,initCallback,closeCallback) {
+    this.icbck = initCallback;
+    this.ccbck = closeCallback;
+    this.rootElement = element;
+    this.lineHeight = 24;
+    this.construct();
+
+    t = this;
+    this.rootElement.on('mousedown',function() {
+        i = t.getPositionByCoordinates(MOUSE.X-t.rootElement.offset().left,MOUSE.Y-t.rootElement.offset().top);
+        t.cursor.positionSet(i);
+        if(!keyPressed(KEY.SHIFT)) t.startSelection(i);
+    });
+    this.rootElement.on('mousemove',function() {
+        if(mousePressed(KEY.MOUSE.LEFT)) {
+            ix = t.getPositionByCoordinates(MOUSE.X-t.rootElement.offset().left,MOUSE.Y-t.rootElement.offset().top);
+            t.cursor.positionSet(ix);
+            t.endSelection(ix);
+        }
+    });
+    this.rootElement.on('mouseup',function() {
+        i = t.getPositionByCoordinates(MOUSE.X-t.rootElement.offset().left,MOUSE.Y-t.rootElement.offset().top);
+        t.cursor.positionSet(i);
+        $('#editableTextListenerInput').focus();
+        t.endSelection(i);
+    });
+    $('#editableTextListenerInput').on('input',function(event) {
+        val = $('#editableTextListenerInput').val();
+        if(val.length) {
+            if(t.selectionLength()>0) {
+                t.deleteSelected();
+            }
+            t.insertCharacter(t.cursor.current(),$('#editableTextListenerInput').val());
+            t.cursor.next();
+        }
+        $('#editableTextListenerInput').val("");
+    });
+    $('#editableTextListenerInput').on('keydown',function(event) {
+        pressedKey = event.which;
+
+        if(pressedKey==KEY.ESCAPE) t.cancel();
+        else if(pressedKey==KEY.ENTER) t.save();
+        else if(pressedKey==KEY.BACKSPACE) {
+            if(t.selectionLength()>0) {
+                t.deleteSelected();
+            }
+            else {
+                if(keyPressed(KEY.CONTROL)) console.log('lollo');
+                t.deleteCharacter(t.cursor.current()-1);
+                t.cursor.previous();
+                t.cursor.draw();
+                event.preventDefault();
+                return false;
+            }
+        }
+        else if(pressedKey==KEY.DELETE) {
+            if(t.selectionLength()>0) {
+                t.deleteSelected();
+            }
+            else {
+                if(t.cursor.current()<t.cursor.end)
+                    t.deleteCharacter(t.cursor.current());
+                t.cursor.draw();
+            }
+        }
+        else if(pressedKey==KEY.ARROW.LEFT) {
+            if(keyPressed(KEY.CONTROL)) t.cursor.positionSet(t.findPrevious());
+            else t.cursor.previous();
+            if(keyPressed(KEY.SHIFT)) t.endSelection(t.cursor.current());
+            else t.startSelection(t.cursor.current());
+        }
+        else if(pressedKey==KEY.ARROW.UP) {
+            t.cursor.previousLine();
+            if(keyPressed(KEY.SHIFT)) t.endSelection(t.cursor.current());
+            else t.startSelection(t.cursor.current());
+        }
+        else if(pressedKey==KEY.ARROW.RIGHT) {
+            if(keyPressed(KEY.CONTROL)) t.cursor.positionSet(t.findNext());
+            else t.cursor.next();
+            if(keyPressed(KEY.SHIFT)) t.endSelection(t.cursor.current());
+            else t.startSelection(t.cursor.current());
+        }
+        else if(pressedKey==KEY.ARROW.DOWN) {
+            t.cursor.nextLine();
+            if(keyPressed(KEY.SHIFT)) t.endSelection(t.cursor.current());
+            else t.startSelection(t.cursor.current());
+        }
+    });
+}
+
+
+EditableTextarea.prototype.construct = function() {
+
+    // execute the init callback function
+    if(this.icbck && jQuery.isFunction(this.icbck))
+        this.icbck(t);
+
+    // save the original content
+    this.originalContent = this.rootElement.html();
+
+    // apply traversing helper spans
+    this.text = this.rootElement.text().replace(/\r?\n/g, "");
+    this.textLength = this.text.length; 
+    this.rootElement.empty();
+    $("<div id='editableText'></div>").appendTo(this.rootElement);
+
+    this.rootElement.children('#editableText').css('position','relative');
+    this.rootElement.children('#editableText').css('white-space','pre-wrap');
+    this.rootElement.children('#editableText').disableSelection();
+    this.rootElement.children('#editableText').append("<textarea name='editableTextListenerInput' id='editableTextListenerInput' style='position: absolute; margin: 0; padding: 0; border: 0; width: 0; height: 0; overflow: hidden;'></textarea>");
+    this.rootElement.children('#editableText').append("<div class='content'></div>");
+    $('#editableTextListenerInput').focus();
+
+    var itr = 0; 
+    while(itr<this.textLength) {
+        $('#editableText .content').append("<span>"+this.text.substring(itr,itr+1)+"</span>");
+        itr += 1;
+    }
+        $('#editableText .content').append("<span class='eof'>&nbsp;</span>");
+
+    // create an iterator
+    this.cursor = new Cursor(this);
+    this.cursor.positionSet(this.getPositionByCoordinates(MOUSE.X-this.rootElement.offset().left,MOUSE.Y-this.rootElement.offset().top));
+
+    // create a selection
+    this.selection = {
+        start: 0,
+        end: 0
+    };
+}
+
+
+EditableTextarea.prototype.destruct = function(newContent) {
+
+    this.rootElement.off();
+    this.rootElement.html(newContent);
+    // execute the close callback function
+    if(this.ccbck && jQuery.isFunction(this.ccbck))
+        this.ccbck();
+}
+
+
+EditableTextarea.prototype.cancel = function() {
+    this.destruct(this.originalContent);
+}
+
+
+EditableTextarea.prototype.save = function() {
+    newContent = "";
+    this.rootElement.children('#editableText').children('.content').children('span').each(function() {
+        newContent += $(this).text();
+    });
+    this.destruct(newContent);
+}
+
+
+EditableTextarea.prototype.getPositionByCoordinates = function(x,y) {
+    var itr = 0;
+    var spans = this.getSpans();
+    while(true) {
+        e = spans.eq(itr);
+        if(itr>=this.cursor.end) return this.cursor.end;
+        itr += 1;
+        if(e.position().top+this.lineHeight<y) continue;
+        if(e.position().top>y) return itr-2;
+        if(e.position().left+e.width()/2<x) continue;
+        return itr-1;
+    }
+}
+
+
+EditableTextarea.prototype.getSpan = function(index) {
+    return this.rootElement.children('#editableText').children('.content').children('span').eq(index);
+}
+
+
+EditableTextarea.prototype.getSpans = function(start,end) {
+    if(start>end) {
+        e = start;
+        start = end;
+        end = e;
+    }
+    start = defaultFor(start,0);
+    end = defaultFor(end,-1);
+    return this.rootElement.children('#editableText').children('.content').children('span').slice(start,end);
+}
+
+
+EditableTextarea.prototype.insertCharacter = function(index,which) {
+    this.getSpan(index).before("<span>"+which+"</span>");
+    this.cursor.end += 1;
+}
+
+
+EditableTextarea.prototype.deleteCharacter = function(index) {
+    this.getSpan(index).remove();
+    this.cursor.end -= 1;
+}
+
+
+EditableTextarea.prototype.deleteSelected = function() {
+    e = this.rootElement.children('#editableText').children('.content').children('span.selected');
+    l = e.length;
+    this.cursor.end -= l;
+    e.remove();
+    if(this.selection.start>this.selection.end) start = this.selection.end;
+    else start = this.selection.start;
+    this.cursor.positionSet(start);
+    this.selection.start = start;
+    this.selection.end = start;
+    return l;
+}
+
+
+EditableTextarea.prototype.findNext = function(needle) {
+    needle = defaultFor(needle," ");
+    spans = this.getSpans(this.cursor.current());
+    for(i=0;i<spans.length;i++) {
+        e = spans.eq(i);
+        if(e.text()==needle) return this.cursor.current()+i+1;
+    }
+    return this.cursor.end;
+}
+
+
+EditableTextarea.prototype.findPrevious = function(needle) {
+    needle = defaultFor(needle," ");
+    spans = this.getSpans(0,this.cursor.current());
+    for(i=spans.length;i>0;i--) {
+        e = spans.eq(i);
+        if(e.text()==needle) return i;
+    }
+    return 0;
+}
+
+
+EditableTextarea.prototype.selectionLength = function() {
+    return Math.abs(this.selection.end-this.selection.start);
+}
+
+
+EditableTextarea.prototype.setSelection = function(start,end) {
+    this.selection.start = start;
+    this.selection.end = end;
+    this.getSpans().removeClass('selected');
+    this.getSpans(this.selection.start,this.selection.end).toggleClass('selected');
+}
+
+
+EditableTextarea.prototype.startSelection = function(index) {
+    if(index>this.cursor.end) this.selection.start = this.cursor.end;
+    else if(index<0) this.selection.start = 0;
+    else this.selection.start = index;
+    this.selection.end = this.selection.start;
+    this.getSpans().removeClass('selected');
+}
+
+
+EditableTextarea.prototype.endSelection = function(index) {
+    if(index>this.cursor.end) this.selection.end = this.cursor.end;
+    else if(index<0) this.selection.end = 0;
+    else this.selection.end = index;
+    this.setSelection(this.selection.start,this.selection.end);
+}
+
+
+
+
+
+
+
+
+
+
+
+function Cursor(parent) {
+    this.parent = parent;
+    this.position = 0;
+    this.end = this.parent.textLength;
+
+    $('#editableText').append("<div class='cursor'></div>");
+    this.element = $('#editableText .cursor');
+    this.element.css('position','absolute');
+    this.element.css('width','1px');
+    this.element.css('height','24px');
+    this.element.css('background-color','#000000');
+}
+
+Cursor.prototype.next = function() {
+    if(this.position<this.end)
+        this.positionSet(this.position+1);
+}
+
+Cursor.prototype.previous = function() {
+    if(this.position>0)
+        this.positionSet(this.position-1);
+}
+
+Cursor.prototype.nextLine = function() {
+    pos = this.parent.getSpan(this.position).position();
+    this.positionSet(this.parent.getPositionByCoordinates(pos.left,parseInt(pos.top+this.parent.lineHeight*1.5)));
+}
+
+Cursor.prototype.previousLine = function() {
+    pos = this.parent.getSpan(this.position).position();
+    this.positionSet(this.parent.getPositionByCoordinates(pos.left,parseInt(pos.top-this.parent.lineHeight*0.5)));
+}
+
+Cursor.prototype.rewind = function() {
+    this.position = 0;
+}
+
+Cursor.prototype.positionSet = function(newPos) {
+    this.position = newPos;
+    if(this.position<0) this.position = 0;
+    else if(this.position>=this.end) this.position = this.end;
+    this.draw();
+}
+
+Cursor.prototype.draw = function() {
+    pos = this.parent.getSpan(this.position).position();
+    this.element.css('left',pos.left);
+    this.element.css('top',pos.top);
+}
+
+Cursor.prototype.current = function() {
+    return this.position;
+}
+textarea = new EditableTextarea($('#asdasd'));
+//textarea.save();
