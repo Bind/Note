@@ -21100,6 +21100,8 @@ var ParagraphActions = Reflux.createActions([
     'editParagraph',
     'deleteParagraph',
     'setActive',
+    'setBeforeActive',
+    'setAfterActive',
     'insertParagraph'
 ]);
 
@@ -21286,6 +21288,7 @@ var TextArea = React.createClass({displayName: "TextArea",
     handleSave:function(){
        //this.props.onSave(this.state.noteText,this.props.id)
     },
+    
     componentWillReceiveProps: function(nextProps) {
         this.setState({
 
@@ -21399,6 +21402,8 @@ var paragraph = React.createClass({displayName: "paragraph",
     },
     componentWillReceiveProps: function(nextProps){
         if (this.props.paragraph.active){
+                window.addEventListener("keypress", this.handleKeyPress)
+                window.addEventListener("keydown", this.handleKeyDown)
              this.setState({
                 active: this.props.paragraph.active,
                 id: this.props.id,
@@ -21427,7 +21432,7 @@ var paragraph = React.createClass({displayName: "paragraph",
       //this.props.onSave(this.props.note_id);
     },
     handleKeyDown: function(e){
-        console.log(e.keyCode);
+        //console.log(e.keyCode);
 
         switch (e.keyCode){
             case 8:
@@ -21478,6 +21483,20 @@ var paragraph = React.createClass({displayName: "paragraph",
             }
                 e.preventDefault();
                 break;
+            case 38:
+                if (this.props.paragraph.active){
+                    ParagraphActions.setBeforeActive(this.props.paragraph);
+                    e.preventDefault();
+                }
+                
+                break;
+            case 40: 
+                if(this.props.paragraph.active){
+                    ParagraphActions.setAfterActive(this.props.paragraph);
+                     e.preventDefault();
+                }
+               
+                break;
             case 13:
             /*ENTER*/
 
@@ -21508,7 +21527,7 @@ var paragraph = React.createClass({displayName: "paragraph",
         
         var text = {__html: _t}
         if(!_t[_c]){
-            highlighted = "_";
+            highlighted = "";
         }
         if (this.state.active){
         text = {__html:_t.slice(0, _c ) + "<span class='yellow'>" +highlighted +"</span>" + _t.slice(_c+1)};
@@ -21576,6 +21595,7 @@ var NoteStore = Reflux.createStore({
         for (var i = 0; i < _notes.length; i++){
             if (_notes[i]._id === note_id){
                 _notes[i].paragraphs = ParagraphStore.getParagraphsByNote(note_id)
+                console.log(_notes[i].paragraphs)
                 this.trigger(_notes);
                 break;
             }
@@ -21614,13 +21634,16 @@ var ParagraphActions = require("../actions/ParagraphActions.js");
 var NoteActions = require("../actions/NoteActions.js")
 
 var _paragraphs = [];
+var _active_index=0;
 var ParagraphStore = Reflux.createStore({
     init: function(){
         this.listenTo(ParagraphActions.createParagraph, this.onCreate);
         this.listenTo(ParagraphActions.insertParagraph, this.onInsert);
         this.listenTo(ParagraphActions.editParagraph, this.onEdit);  
         this.listenTo(ParagraphActions.deleteParagraph,this.onDelete);
-        this.listenTo(ParagraphActions.setActive, this.onSetActive)
+        this.listenTo(ParagraphActions.setActive, this.onSetActive);
+        this.listenTo(ParagraphActions.setBeforeActive, this.onSetBeforeActive);
+        this.listenTo(ParagraphActions.setAfterActive, this.onSetAfterActive);
     },
     onCreate:function(paragraph){
         _paragraphs.push(paragraph)
@@ -21629,17 +21652,18 @@ var ParagraphStore = Reflux.createStore({
     },
     onInsert: function(paragraph, previous){
         console.log("creating")
-        console.log(previous)
-                console.log(_paragraphs)
 
         for (var i = 0; i < _paragraphs.length; i++){
             if (_paragraphs[i]._id === previous._id){
-                _paragraphs.splice(i+1,0,paragraph) ;
+                _paragraphs[i].active = false;
+
+                _paragraphs.splice(i+1,0,paragraph);
+                _active_index = i+1;
+                console.log(_active_index);
                 NoteActions.pullParagraphs(paragraph.note_id);
                 break;
             }
-        }
-        this.onSetActive(paragraph)        
+        }       
         this.trigger(_paragraphs)
     },
     onEdit: function(paragraph){
@@ -21671,10 +21695,45 @@ var ParagraphStore = Reflux.createStore({
             if (_paragraphs[i]._id === paragraph._id){
                 var note_id = paragraph.note_id
                 _paragraphs[i].active = true;
+                _active_index = i;
+                console.log(_active_index);
+
                 NoteActions.pullParagraphs(note_id);
             } else{
                 _paragraphs[i].active = false;
             } 
+        }
+    },
+    onSetAfterActive: function(paragraph){
+        for (var i = 0; i < _paragraphs.length; i++){
+            if (_paragraphs[i]._id === paragraph._id ){
+                if (_paragraphs.length-1 > i){
+                var note_id = paragraph.note_id
+                _paragraphs[i+1].active = true;
+                _paragraphs[i].active = false;
+                _active_index = i+1;
+                console.log(_active_index);
+                NoteActions.pullParagraphs(note_id);
+                this.trigger(_paragraphs)
+                }
+            } 
+        }
+    },
+    onSetBeforeActive: function(paragraph){
+        for (var i = 0; i < _paragraphs.length; i++){
+            if (_paragraphs[i]._id === paragraph._id){
+                if (i > 0){
+                    var note_id = paragraph.note_id
+                    _paragraphs[i-1].active = true;
+                    _paragraphs[i].active = false;
+                    _active_index = i-1;
+                    console.log(_active_index);
+
+                    NoteActions.pullParagraphs(note_id);
+                    this.trigger(_paragraphs)
+
+                }
+            }
         }
     },
     getParagraphs: function(){

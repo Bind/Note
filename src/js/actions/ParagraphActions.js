@@ -5,6 +5,8 @@ var ParagraphActions = Reflux.createActions([
     'editParagraph',
     'deleteParagraph',
     'setActive',
+    'setBeforeActive',
+    'setAfterActive',
     'insertParagraph'
 ]);
 

@@ -49,6 +49,7 @@ var NoteStore = Reflux.createStore({
         for (var i = 0; i < _notes.length; i++){
             if (_notes[i]._id === note_id){
                 _notes[i].paragraphs = ParagraphStore.getParagraphsByNote(note_id)
+                console.log(_notes[i].paragraphs)
                 this.trigger(_notes);
                 break;
             }

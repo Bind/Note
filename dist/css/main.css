@@ -10116,9 +10116,9 @@ body {
 }
 
 .paragraph {
-  min-height: 2em;
+  min-height: 1.5em;
   font-family: "Arial";
-  border: 1px solid yellow;
+  margin-bottom: 0;
 }
 .paragraph:focus {
   outline: 0px solid transparent;
@@ -10137,6 +10137,8 @@ body {
 .yellow {
   background-color: yellow;
   min-width: 10px;
+  height: 1.2em;
+  margin-bottom: -2px;
   display: inline-block;
   text-align: center;
 }

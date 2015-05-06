@@ -29,9 +29,10 @@ width:30%;
 text-align:center;
 }
 .paragraph{
-    min-height:2em;
+    min-height:1.5em;
     font-family: "Arial";
-    border: 1px solid yellow;
+    margin-bottom: 0;
+
     &:focus{
         outline: 0px solid transparent;
     }
@@ -50,6 +51,8 @@ background-color:black;
 .yellow{
     background-color:yellow;
     min-width:10px;
+    height:1.2em;
+    margin-bottom:-2px;
     display:inline-block;
     text-align:center;
 }

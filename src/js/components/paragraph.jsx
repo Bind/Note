@@ -32,6 +32,8 @@ var paragraph = React.createClass({
     },
     componentWillReceiveProps: function(nextProps){
         if (this.props.paragraph.active){
+                window.addEventListener("keypress", this.handleKeyPress)
+                window.addEventListener("keydown", this.handleKeyDown)
              this.setState({
                 active: this.props.paragraph.active,
                 id: this.props.id,
@@ -60,7 +62,7 @@ var paragraph = React.createClass({
       //this.props.onSave(this.props.note_id);
     },
     handleKeyDown: function(e){
-        console.log(e.keyCode);
+        //console.log(e.keyCode);
 
         switch (e.keyCode){
             case 8:
@@ -111,6 +113,20 @@ var paragraph = React.createClass({
             }
                 e.preventDefault();
                 break;
+            case 38:
+                if (this.props.paragraph.active){
+                    ParagraphActions.setBeforeActive(this.props.paragraph);
+                    e.preventDefault();
+                }
+                
+                break;
+            case 40: 
+                if(this.props.paragraph.active){
+                    ParagraphActions.setAfterActive(this.props.paragraph);
+                     e.preventDefault();
+                }
+               
+                break;
             case 13:
             /*ENTER*/
 
@@ -141,7 +157,7 @@ var paragraph = React.createClass({
         
         var text = {__html: _t}
         if(!_t[_c]){
-            highlighted = "_";
+            highlighted = "";
         }
         if (this.state.active){
         text = {__html:_t.slice(0, _c ) + "<span class='yellow'>" +highlighted +"</span>" + _t.slice(_c+1)};

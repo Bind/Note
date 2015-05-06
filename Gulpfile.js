@@ -10,11 +10,21 @@ var gulp = require('gulp'),
     gutil = require("gulp-util"),
     colors = require("colors"),
     ngrok = require('ngrok'),
-    config = require("./config");
+    config = require("./config"),
+    jshint = require("gulp-jshint")
+
 
 gutil.log = require("./bin/log")
 
 var server;
+
+gulp.task("lint", function(){
+  return gulp.src('./lib/.js')
+    .pipe(jshint({linter: "jsxhint"}))
+    .pipe()
+  })
+
+
 
 gulp.task('browserify', function(){
   gulp.src('src/js/components/NoteApp.jsx')
